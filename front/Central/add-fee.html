@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Fee Form</title>
+  <link rel="stylesheet" type="text/css" href="./Styles/add-fee.css">
+</head>
+<body>
+    <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div class="container">
+  <h1>Add Fee</h1>
+  <form id="addFeeForm">
+    <input type="number" id="feeId" name="feeId" required placeholder="Enter Fee Id "><br>
+    <input type="text" id="title" name="title" required placeholder="Enter the Fee name "><br>
+    <input type="text" id="description" name="description" required placeholder="Enter the Fee Description "><br>
+    <input type="number" id="amount" name="amount" required placeholder="Enter the Amount "><br>
+    <input type="datetime-local" id="deadline" name="deadline" required placeholder="Enter the Fee DeadLine"><br>
+    <input type="text" id="studentType" name="studentType" required placeholder="Enter Student Type "><br>
+    <input type="text" id="feeType" name="feeType" required placeholder="Enter Fee type "><br>
+
+    <button type="submit">Add Fee</button>
+  </form>
+</div>
+
+<div class="container">
+  <div id="response">
+    <h2>Response</h2>
+    <ul id="responseList"></ul>
+  </div>
+</div>
+
+  <script>
+    document.getElementById('addFeeForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const formObject = {};
+      formData.forEach((value, key) => {
+        if (key === 'deadline') {
+          formObject[key] = new Date(value).getTime() / 1000;
+        } else {
+          formObject[key] = value;
+        }
+      });
+
+      const responseList = document.getElementById('responseList');
+      responseList.innerHTML = '<li>Adding fee...</li>';
+
+      const response = await fetch('http://localhost:3000/addfee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formObject)
+      });
+
+      const responseData = await response.json();
+      responseList.innerHTML = ''; // Clear the list
+
+      for (const key in responseData) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<strong>${key}:</strong> ${JSON.stringify(responseData[key])}`;
+        responseList.appendChild(listItem);
+      }
+    });
+  </script>
+</body>
+</html>

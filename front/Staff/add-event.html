@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Event</title>
+  <link rel="stylesheet" href="./Styles/addStud.css">
+</head>
+<body>
+  <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div class="container">
+    <h1>Add Event</h1>
+    <form id="addEventForm">
+      <input type="text" id="eventName" name="eventName" required placeholder="Event Name">
+      <input type="number" id="totalParticipants" name="totalParticipants" required placeholder="Total Participants">
+      <input type="text" id="eventDescription" name="eventDescription" required placeholder="Event Description">
+      <input type="text" id="eventType" name="eventType" required placeholder="Event Type">
+      <input type="text" id="department" name="department" required placeholder="Department"><br>
+      <button type="submit">Add Event</button>
+    </form>
+    <div id="result"></div>
+    <button id="getAllEvents">Get All Events</button>
+    <div id="eventsList"></div>
+  </div>
+  <script>
+    document.getElementById('addEventForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const payload = {};
+
+      formData.forEach((value, key) => {
+        payload[key] = value;
+      });
+
+      try {
+        const response = await fetch('http://localhost:3000/addevent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const resultElement = document.getElementById('result');
+          resultElement.textContent = data.message;
+          resultElement.style.color = 'green';
+        } else {
+          const resultElement = document.getElementById('result');
+          resultElement.textContent = 'Error adding event';
+          resultElement.style.color = 'red';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+
+    document.getElementById('getAllEvents').addEventListener('click', async function() {
+    try {
+      const response = await fetch('http://localhost:3000/getallevents', {
+        method: 'GET',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const eventsList = document.getElementById('eventsList');
+        eventsList.innerHTML = ''; // Clear previous events
+
+        if (data.length > 0) {
+          const ul = document.createElement('ul');
+
+          data.forEach(event => {
+            const li = document.createElement('li');
+            li.textContent = `Event Name: ${event[0]},Type: ${event[2]},Participants: ${event[1]}`;
+            ul.appendChild(li);
+          });
+
+          eventsList.appendChild(ul);
+        } else {
+          eventsList.textContent = 'No events found.';
+        }
+      } else {
+        console.error('Error fetching events');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
+  </script>
+</body>
+</html>
+

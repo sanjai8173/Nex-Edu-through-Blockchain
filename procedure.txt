@@ -1,0 +1,40 @@
+truffle migrate
+
+node app.js
+
+step 1 : curl -X POST -H "Content-Type: application/json" -d '{
+  "registerNumber": "AC20UIT000",
+  "name": "RAM",
+  "department": "Computer Science",
+  "studentType": "Undergraduate"
+}' http://localhost:3000/register-student
+
+step2 : curl http://localhost:3000/getStudentInfo/AC20UIT000
+
+step3 : curl -X POST -H "Content-Type: application/json" -d '{
+  "feeId": "1",
+  "title": "Tution Fee",
+  "description": "For under graduates",
+  "amount": 50000,
+  "deadline": "2023-12-31",
+  "studentType": "Undergraduate",
+  "feeType": "Tuition"
+}' http://localhost:3000/addfee
+
+step4 : curl http://localhost:3000/retrievefee/feeId   or     curl http://localhost:3000/retrieveallfees
+
+step5 : curl -X POST -H "Content-Type: application/json" -d '{
+  "senderRegNo": "AC20UIT000",
+  "senderName": "RAM",
+  "senderAccountNo": "IOB00A",
+  "receiverRegNo": "ACE1",
+  "receiverName": "ADHIYAMAAN",
+  "receiverAccountNo": "IOB00B",
+  "amount": 50000,
+  "description": "Payment description",
+  "feeId": "1",
+  "registerNumber": "AC20UIT040",
+  "feeIdToPay": "1"
+}' http://localhost:3000/executeActions
+
+step6 : curl http://localhost:3000/getBill/AC20UIT000/1

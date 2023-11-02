@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bill Actions</title>
+</head>
+<body>
+  <h1>Add Bill and Pay Fee</h1>
+  <form id="billForm">
+    <h2>Add Bill</h2>
+    <label for="senderRegNo">Sender Registration No:</label>
+    <input type="text" id="senderRegNo" required><br>
+    <label for="senderName">Sender Name:</label>
+    <input type="text" id="senderName" required><br>
+    <label for="senderAccountNo">Sender Account No:</label>
+    <input type="text" id="senderAccountNo" required><br>
+    <label for="receiverRegNo">Receiver Registration No:</label>
+    <input type="text" id="receiverRegNo" required><br>
+    <label for="receiverName">Receiver Name:</label>
+    <input type="text" id="receiverName" required><br>
+    <label for="receiverAccountNo">Receiver Account No:</label>
+    <input type="text" id="receiverAccountNo" required><br>
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" required><br>
+    <label for="description">Description:</label>
+    <input type="text" id="description" required><br>
+    <label for="feeId">Fee ID:</label>
+    <input type="number" id="feeId" required><br>
+
+    <h2>Pay Fee</h2>
+    <label for="registerNumber">Register Number:</label>
+    <input type="text" id="registerNumber" required><br>
+    <label for="feeIdToPay">Fee ID to Pay:</label>
+    <input type="number" id="feeIdToPay" required><br>
+
+    <button type="submit">Execute Actions</button>
+  </form>
+
+  <div id="response"></div>
+
+  <script>
+    const billForm = document.getElementById('billForm');
+    const responseDiv = document.getElementById('response');
+
+    billForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const senderRegNo = document.getElementById('senderRegNo').value;
+      const senderName = document.getElementById('senderName').value;
+      const senderAccountNo = document.getElementById('senderAccountNo').value;
+      const receiverRegNo = document.getElementById('receiverRegNo').value;
+      const receiverName = document.getElementById('receiverName').value;
+      const receiverAccountNo = document.getElementById('receiverAccountNo').value;
+      const amount = document.getElementById('amount').value;
+      const description = document.getElementById('description').value;
+      const feeId = document.getElementById('feeId').value;
+      const registerNumber = document.getElementById('registerNumber').value;
+      const feeIdToPay = document.getElementById('feeIdToPay').value;
+
+      const response = await fetch('http://localhost:3000/executeActions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderRegNo,
+          senderName,
+          senderAccountNo,
+          receiverRegNo,
+          receiverName,
+          receiverAccountNo,
+          amount,
+          description,
+          feeId,
+          registerNumber,
+          feeIdToPay,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      responseDiv.innerHTML = `<pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Information</title>
+</head>
+<body>
+  <h1>Student Information</h1>
+  <form id="studentForm">
+    <label for="registerNumber">Enter Registration Number:</label>
+    <input type="text" id="registerNumber" name="registerNumber" required>
+    <button type="submit">Retrieve Info</button>
+  </form>
+
+  <h2>Student Details</h2>
+  <div id="studentInfo"></div>
+
+  <h2>Paid Bills</h2>
+  <div id="paidBills"></div>
+
+  <h2>Unpaid Fees</h2>
+  <div id="unpaidFees"></div>
+
+  <script>
+    document.getElementById('studentForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const registerNumber = document.getElementById('registerNumber').value;
+      const response = await fetch(`http://localhost:3000/getStudentInfo/${registerNumber}`);
+      const data = await response.json();
+
+      const studentInfo = data.studentInfo;
+      const paidBills = data.paidBills;
+      const unpaidFees = data.unpaidFees;
+
+      document.getElementById('studentInfo').innerHTML = `
+        <p><strong>Register Number:</strong> ${studentInfo.registerNumber}</p>
+        <p><strong>Name:</strong> ${studentInfo.name}</p>
+        <p><strong>Department:</strong> ${studentInfo.department}</p>
+        <p><strong>Student Type:</strong> ${studentInfo.studentType}</p>
+      `;
+
+      const paidBillsHtml = paidBills.map(bill => `
+        <p><strong>Bill ID:</strong> ${bill.feeId}</p>
+        <p><strong>Title:</strong> ${bill.title}</p>
+        <p><strong>Description:</strong> ${bill.description}</p>
+        <p><strong>Amount:</strong> ${bill.amount}</p>
+        <p><strong>Deadline:</strong> ${bill.deadline}</p>
+      `).join('');
+
+      document.getElementById('paidBills').innerHTML = paidBillsHtml;
+
+      const unpaidFeesHtml = unpaidFees.map(fee => `
+        <p><strong>Bill ID:</strong> ${fee.feeId}</p>
+        <p><strong>Title:</strong> ${fee.title}</p>
+        <p><strong>Description:</strong> ${fee.description}</p>
+        <p><strong>Amount:</strong> ${fee.amount}</p>
+        <p><strong>Deadline:</strong> ${fee.deadline}</p>
+      `).join('');
+
+      document.getElementById('unpaidFees').innerHTML = unpaidFeesHtml;
+    });
+  </script>
+</body>
+</html>

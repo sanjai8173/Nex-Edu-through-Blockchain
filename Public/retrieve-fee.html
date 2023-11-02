@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Event Management</title>
+</head>
+<body>
+  <h1>Event Management</h1>
+  
+  <!-- ... (Store Event form) ... -->
+
+  <!-- ... (Retrieve Event form) ... -->
+  
+  <!-- ... (Retrieve All Events button) ... -->
+
+  <!-- ... (Event Details section) ... -->
+
+  <h2>Retrieve Fee</h2>
+  <form id="retrieveFeeForm">
+    <label for="retrieveFeeId">Fee ID:</label>
+    <input type="number" id="retrieveFeeId" name="retrieveFeeId" required><br>
+    <button type="submit">Retrieve Fee</button>
+  </form>
+
+  <h2>Retrieve All Fees</h2>
+  <button id="retrieveAllFeesButton">Retrieve All Fees</button>
+  <ul id="feeList"></ul>
+
+  <h2>Fee Details</h2>
+  <div id="feeDetails"></div>
+
+  <script>
+    // ... (Your existing JavaScript code)
+
+    document.getElementById('retrieveFeeForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const feeId = document.getElementById('retrieveFeeId').value;
+
+      const response = await fetch(`http://localhost:3000/retrievefee/${feeId}`);
+      const responseJson = await response.json();
+
+      const feeDetails = document.getElementById('feeDetails');
+      feeDetails.innerHTML = '';
+
+      const table = document.createElement('table');
+      table.className = 'fee-table';
+
+      for (const key in responseJson) {
+        const row = table.insertRow();
+        const cell1 = row.insertCell();
+        cell1.textContent = key;
+        const cell2 = row.insertCell();
+        cell2.textContent = JSON.stringify(responseJson[key]);
+      }
+
+      feeDetails.appendChild(table);
+    });
+
+    document.getElementById('retrieveAllFeesButton').addEventListener('click', async () => {
+      const response = await fetch('http://localhost:3000/retrieveallfees');
+      const responseJson = await response.json();
+
+      const feeList = document.getElementById('feeList');
+      feeList.innerHTML = '';
+
+      responseJson.forEach((fee) => {
+        const feeItem = document.createElement('li');
+        feeItem.innerHTML = `
+          <strong>Fee ID:</strong> ${fee["feeId"]}<br>
+          <strong>Title:</strong> ${fee["title"]}<br>
+          <strong>Description:</strong> ${fee["description"]}<br>
+          <strong>Amount:</strong> ${fee["amount"]}<br>
+          <strong>Deadline:</strong> ${fee["deadline"]}<br>
+          <strong>Student Type:</strong> ${fee["studentType"]}<br>
+          <strong>Fee Type:</strong> ${fee["feeType"]}<br>
+          <hr>
+        `;
+        feeList.appendChild(feeItem);
+      });
+    });
+  </script>
+</body>
+</html>

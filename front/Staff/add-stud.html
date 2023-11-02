@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration</title>
+  <link rel="stylesheet" href="./Styles/addStud.css">
+</head>
+<body>
+  <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div class="container">
+  <h1>Student Registration</h1>
+  <form id="registrationForm">
+    <input type="text" id="registerNumber" name="registerNumber" required placeholder="Enter Your Register Number ">
+    <input type="text" id="name" name="name" required placeholder="Enter Your Name ">
+    <input type="text" id="department" name="department" required placeholder="Enter Your Department ">
+    <input type="text" id="studentType" name="studentType" required placeholder="Enter the Student Type"><br>
+    <input type="email" id="studentEmail" name="studentEmail" required placeholder="Enter the Student Email Id">
+    <input type="password" id="studentPassword" name="studentPassword" required placeholder="Enter the Student Password"><br>
+    <button type="submit">Register Student</button>
+  </form>
+</div>
+<div class="container">
+  <h2>Registration Result</h2>
+  <ul id="resultList"></ul>
+</div>
+
+  <script>
+    document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const payload = {};
+
+      formData.forEach((value, key) => {
+        payload[key] = value;
+      });
+
+      try {
+        const response = await fetch('http://localhost:3000/register-student', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        const resultList = document.getElementById('resultList');
+        const listItem = document.createElement('li');
+
+        if (response) {
+          listItem.textContent = `Success: ${data.message}`;
+          listItem.style.color = 'green';
+        } else {
+          listItem.textContent = `Error: ${data.message}`;
+          listItem.style.color = 'red';
+        }
+
+        resultList.appendChild(listItem);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

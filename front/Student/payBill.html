@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bill Actions</title>
+  <link rel="stylesheet" href="./Styles/payBill.css">
+</head>
+<body>
+  <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div class="container">
+      <h1>Fee Payment Portal</h1>
+  <form id="billForm">
+    <input type="number" id="feeId" required placeholder="Enter Fee ID ">
+    <input type="text" id="senderRegNo" required placeholder="Enter Sender Reg No ">
+    <input type="text" id="senderName" required placeholder="Enter Sender Name ">
+    <input type="text" id="senderAccountNo" required placeholder="Enter Sender Acc No ">
+    <input type="text" id="receiverRegNo" required placeholder="Enter College ID ">
+    <input type="text" id="receiverName" required placeholder="Enter College Name ">
+    <input type="text" id="receiverAccountNo" required placeholder="Enter College Account No ">
+    <input type="number" id="amount" required placeholder="Enter Fee Amount ">
+    <input type="text" id="description" required placeholder="Add Note ">
+    <input type="text" id="registerNumber" required placeholder="Re-enter Register No ">
+    <input type="number" id="feeIdToPay" required placeholder="Re-enter Fee ID "><br>
+
+    <button type="submit">Execute Actions</button>
+  </form>
+</div>
+
+  <div id="response"></div>
+
+  <script>
+    const billForm = document.getElementById('billForm');
+    const responseDiv = document.getElementById('response');
+
+    billForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const senderRegNo = document.getElementById('senderRegNo').value;
+      const senderName = document.getElementById('senderName').value;
+      const senderAccountNo = document.getElementById('senderAccountNo').value;
+      const receiverRegNo = document.getElementById('receiverRegNo').value;
+      const receiverName = document.getElementById('receiverName').value;
+      const receiverAccountNo = document.getElementById('receiverAccountNo').value;
+      const amount = document.getElementById('amount').value;
+      const description = document.getElementById('description').value;
+      const feeId = document.getElementById('feeId').value;
+      const registerNumber = document.getElementById('registerNumber').value;
+      const feeIdToPay = document.getElementById('feeIdToPay').value;
+
+      const response = await fetch('http://localhost:3000/executeActions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          senderRegNo,
+          senderName,
+          senderAccountNo,
+          receiverRegNo,
+          receiverName,
+          receiverAccountNo,
+          amount,
+          description,
+          feeId,
+          registerNumber,
+          feeIdToPay,
+        }),
+      });
+
+      const responseData = await response.json();
+
+  // Check for addBillResponse and payFeeResponse
+  if (responseData.addBillResponse) {
+    const addBillResponse = JSON.parse(responseData.addBillResponse);
+    responseDiv.innerHTML = `<div class="container">
+      <p>${addBillResponse.message}</p>
+      <p>The Bill number is: ${addBillResponse.billNumber}</p>
+    </div>`;
+  } else if (responseData.payFeeResponse) {
+    const payFeeResponse = JSON.parse(responseData.payFeeResponse);
+    responseDiv.innerHTML = `<div class="container">
+      <p>${payFeeResponse.message}</p>
+    </div>`;
+  } else {
+    responseDiv.innerHTML = `<div class="container">
+      <p>Failed to retrieve response data.</p>
+    </div>`;
+  }
+});
+  </script>
+</body>
+</html>

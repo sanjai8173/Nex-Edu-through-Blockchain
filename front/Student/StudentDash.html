@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Dashboard</title>
+  <link rel="stylesheet" type="text/css" href="./Styles/Dash.css">
+</head>
+<body>
+  <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div id="loadingIndicator">
+    Loading...
+  </div>
+  <div id="content" style="display: none;">
+    <div id="studentInfo"></div>
+    <div id="paidBills"></div>
+    <button type="button" id="retBill">Get Bill</button><br>
+    <div id="unpaidFees"></div>
+    <button type="button" id="payBill">Pay Bill</button><br>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const registerNumber = urlParams.get('registerNumber');
+
+    async function fetchStudentInfo() {
+      try {
+        const response = await axios.get(`http://localhost:3000/getStudentInfo/${registerNumber}`);
+
+        const data = response.data;
+
+        const studentInfo = data.studentInfo;
+        const paidBills = data.paidBills;
+        const unpaidFees = data.unpaidFees;
+
+        document.getElementById('studentInfo').innerHTML = `
+          <div class="container">
+            <p><strong>Register Number:</strong> ${studentInfo.registerNumber}</p>
+            <p><strong>Name:</strong> ${studentInfo.name}</p>
+            <p><strong>Department:</strong> ${studentInfo.department}</p>
+            <p><strong>Student Type:</strong> ${studentInfo.studentType}</p>
+          </div>
+        `;
+
+        // Display paid bills
+        const paidBillsHtml = paidBills.map(bill => `
+          <div class="container">
+            <h3>Paid Bill ${bill.feeId}</h3>
+            <p><strong>Title:</strong> ${bill.title}</p>
+            <p><strong>Description:</strong> ${bill.description}</p>
+            <p><strong>Amount:</strong> ${bill.amount}</p>
+            <p><strong>Deadline:</strong> ${bill.deadline}</p>
+          </div>
+        `).join('');
+
+        document.getElementById('paidBills').innerHTML = `<h2>Paid Fees</h2>${paidBillsHtml}`;
+
+        // Display unpaid fees
+        const unpaidFeesHtml = unpaidFees.map(fee => `
+          <div class="container">
+            <p><strong>Fee Id:</strong> ${fee.feeId}</p>
+            <p><strong>Title:</strong> ${fee.title}</p>
+            <p><strong>Description:</strong> ${fee.description}</p>
+            <p><strong>Amount:</strong> ${fee.amount}</p>
+            <p><strong>Deadline:</strong> ${fee.deadline}</p>
+          </div>
+        `).join('');
+
+        document.getElementById('unpaidFees').innerHTML = `<h2>Unpaid Fees</h2>${unpaidFeesHtml}`;
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle the error, e.g., display an error message to the user
+      } finally {
+        // Hide loading indicator and show content
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+      }
+    }
+
+    fetchStudentInfo();
+    document.getElementById('retBill').addEventListener('click', () => {
+      window.location.href = `./retBill.html?registerNumber=${registerNumber}`;
+    });
+    document.getElementById('payBill').addEventListener('click', () => {
+      window.location.href = `./payBill.html?registerNumber=${registerNumber}`;
+    });
+  </script>
+</body>
+</html>

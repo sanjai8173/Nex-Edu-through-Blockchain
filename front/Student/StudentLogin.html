@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nex Edu</title>
+  <link rel="stylesheet" type="text/css" href="./Styles/form.css">
+</head>
+<body>
+  <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div class="container">
+  <div class="form">
+    <h1>Log In</h1>
+    <form id="studentForm">
+      <div>
+      <input type="text" id="registerNumber" name="registerNumber" placeholder="Enter your Register No">
+    </div>
+        <div>
+          <input type="text" id="email" name="email" placeholder="Registered email">
+        </div>
+        <div>
+          <input type="password" id="password" name="password" placeholder="Enter your Password">
+        </div>
+        <div>  
+          <button type="button" id="loginButton">Log In</button><br>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginButton').addEventListener('click', async () => {
+      const registerNumber = document.getElementById('registerNumber').value;
+      window.location.href = './StudentDash.html';
+      window.location.href = `./StudentDash.html?registerNumber=${registerNumber}`;
+    });
+  </script>
+</body>
+</html>

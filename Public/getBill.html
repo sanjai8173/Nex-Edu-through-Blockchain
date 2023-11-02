@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Bill Information</title>
+</head>
+<body>
+  <h1>Bill Information</h1>
+  <div id="billInfo"></div>
+
+  <script>
+    async function getBillInformation(senderRegNo, feeId) {
+      try {
+        const response = await fetch(`http://localhost:3000/getBill/${senderRegNo}/${feeId}`);
+        const data = await response.json();
+
+        const billDetails = data.bill;
+        const billHTML = `
+          <h2>Bill Information</h2>
+          <pre>${JSON.stringify(billDetails, null, 2)}</pre>
+        `;
+
+        const billInfoDiv = document.getElementById('billInfo');
+        billInfoDiv.innerHTML = billHTML;
+      } catch (error) {
+        console.error('Error:', error);
+        const billInfoDiv = document.getElementById('billInfo');
+        billInfoDiv.innerHTML = '<p>Error retrieving bill information</p>';
+      }
+    }
+
+    // Extract senderRegNo and feeId from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const senderRegNo = urlParams.get('senderRegNo');
+    const feeId = urlParams.get('feeId');
+
+    // Call the function with extracted values
+    if (senderRegNo && feeId) {
+      getBillInformation(senderRegNo, feeId);
+    }
+  </script>
+</body>
+</html>

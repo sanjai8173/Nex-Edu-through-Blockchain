@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Fee Form</title>
+</head>
+<body>
+  <h1>Add Fee</h1>
+  <form id="addFeeForm">
+    <label for="feeId">Fee ID:</label>
+    <input type="number" id="feeId" name="feeId" required><br>
+
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required><br>
+
+    <label for="description">Description:</label>
+    <input type="text" id="description" name="description" required><br>
+
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" name="amount" required><br>
+
+    <label for="deadline">Deadline:</label>
+    <input type="datetime-local" id="deadline" name="deadline" required><br>
+
+    <label for="studentType">Student Type:</label>
+    <input type="text" id="studentType" name="studentType" required><br>
+
+    <label for="feeType">Fee Type:</label>
+    <input type="text" id="feeType" name="feeType" required><br>
+
+    <button type="submit">Add Fee</button>
+  </form>
+
+  <div id="response">
+    <h2>Response</h2>
+    <ul id="responseList"></ul>
+  </div>
+
+  <script>
+    document.getElementById('addFeeForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const formObject = {};
+      formData.forEach((value, key) => {
+        if (key === 'deadline') {
+          formObject[key] = new Date(value).getTime() / 1000;
+        } else {
+          formObject[key] = value;
+        }
+      });
+
+      const responseList = document.getElementById('responseList');
+      responseList.innerHTML = '<li>Adding fee...</li>';
+
+      const response = await fetch('http://localhost:3000/addfee', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formObject)
+      });
+
+      const responseData = await response.json();
+      responseList.innerHTML = ''; // Clear the list
+
+      for (const key in responseData) {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<strong>${key}:</strong> ${JSON.stringify(responseData[key])}`;
+        responseList.appendChild(listItem);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pay Fee Form</title>
+</head>
+<body>
+
+<h2>Pay Fee Form</h2>
+
+<form id="payFeeForm">
+  <label for="registerNumber">Register Number:</label>
+  <input type="text" id="registerNumber" name="registerNumber" required><br><br>
+
+  <label for="feeId">Fee ID:</label>
+  <input type="number" id="feeId" name="feeId" required><br><br>
+
+  <input type="submit" value="Pay Fee">
+</form>
+
+<script>
+  document.getElementById("payFeeForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const registerNumber = document.getElementById("registerNumber").value;
+    const feeId = document.getElementById("feeId").value;
+
+    const response = await fetch(`http://localhost:3000/payFee/${registerNumber}/${feeId}`, {
+      method: "POST"
+    });
+
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      alert(jsonResponse.message);
+    } else {
+      alert("Error paying fee");
+    }
+  });
+</script>
+
+</body>
+</html>

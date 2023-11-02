@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bill Details</title>
+  <link rel="stylesheet" href="./Styles/retBill.css">
+</head>
+<body>
+  <div class="header">
+    <a>NexEdu</a>
+    <div>
+      <p>"Connecting tomorrow's Fee Structures Today Through Blockchain"</p>
+    </div>
+  </div>
+  <div class="container">
+    <h1>Bill Details</h1>
+
+    <input type="text" id="senderRegNo" name="senderRegNo" placeholder="Enter Registration No">
+    <input type="text" id="feeId" name="feeId" placeholder="Enter Fee ID"><br><br>
+
+    <button onclick="fetchBillInfo()">Get Bill Details</button>
+  </div>
+
+  <div id="billInfo"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    async function fetchBillInfo() {
+      const senderRegNo = document.getElementById('senderRegNo').value;
+      const feeId = document.getElementById('feeId').value;
+
+      if (!senderRegNo || !feeId) {
+        alert('Please enter both sender registration number and fee ID.');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:3000/getBill/${senderRegNo}/${feeId}`);
+        const data = response.data;
+
+        // Convert Unix timestamp to human-readable date format
+        const dateTime = new Date(data.bill.dateTime * 1000).toLocaleString();
+
+        const billInfoHtml = `
+          <div class="container">
+            <div class="a">
+              <h1>Bill Details</h1>
+              <p><strong>Sender Registration Number:</strong> ${data.bill.senderRegNo}</p>
+              <p><strong>Sender Name:</strong> ${data.bill.senderName}</p>
+              <p><strong>Sender Account Number:</strong> ${data.bill.senderAccountNo}</p>
+              <p><strong>Receiver Registration Number:</strong> ${data.bill.receiverRegNo}</p>
+              <p><strong>Receiver Name:</strong> ${data.bill.receiverName}</p>
+              <p><strong>Receiver Account Number:</strong> ${data.bill.receiverAccountNo}</p>
+              <p><strong>Amount:</strong> ${data.bill.amount}</p>
+              <p><strong>Date and Time:</strong> ${dateTime}</p>
+              <p><strong>Description:</strong> ${data.bill.description}</p>
+            </div>
+          </div>
+        `;
+
+        document.getElementById('billInfo').innerHTML = billInfoHtml;
+      } catch (error) {
+        console.error('Error:', error);
+        // Handle the error, e.g., display an error message to the user
+      }
+    }
+  </script>
+</body>
+</html>
